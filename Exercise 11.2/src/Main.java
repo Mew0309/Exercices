@@ -1,27 +1,86 @@
-public class Exercise_11_02 {
-    // Main method
-    public static void main(String[] args) {
-        // Create a Person, Student, Employee, Faculty, and Staff objects
-        Person person = new Person("John", "12 Bell street",
-                "3473339999", "john12@aol.com");
+import java.util.Date; // Assuming MyDate class is implemented as per Exercise 10.14
 
-        Student student = new Student("Mary", "100 Town Ave", "5149993333",
-                "mary100@aol.com", Student.FRESHMAN);
+class Person {
+    protected String name;
+    protected String address;
+    protected String phoneNumber;
+    protected String email;
 
-        Employee employee = new Employee("Mike", "34 West street", "6189999999",
-                "mike80@aol.com", 910, 60000);
+    public Person(String name, String address, String phoneNumber, String email) {
+        this.name = name;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+    }
 
-        Faculty faculty = new Faculty("Sue", "28 Well street", "4133333333",
-                "sue28@aol.com", 101, 50000, "4pm to 6pm", "Professor");
+    @Override
+    public String toString() {
+        return "Person: " + name;
+    }
+}
 
-        Staff staff = new Staff("Tom", "90 Country road", "2030000000",
-                "tomcat@aol.com", 12, 65000, "Executive Assistant");
+class Student extends Person {
+    public static final String FRESHMAN = "Freshman";
+    public static final String SOPHOMORE = "Sophomore";
+    public static final String JUNIOR = "Junior";
+    public static final String SENIOR = "Senior";
+    private String classStatus;
 
-        // Invoke toString of Person, Student, Employee, Faculty and Staff
-        System.out.println(person.toString());
-        System.out.println(student.toString());
-        System.out.println(employee.toString());
-        System.out.println(faculty.toString());
-        System.out.println(staff.toString());
+    public Student(String name, String address, String phoneNumber, String email, String classStatus) {
+        super(name, address, phoneNumber, email);
+        this.classStatus = classStatus;
+    }
+
+    @Override
+    public String toString() {
+        return "Student: " + name + " (Class Status: " + classStatus + ")";
+    }
+}
+
+class Employee extends Person {
+    private String office;
+    private double salary;
+    private Date dateHired;
+
+    public Employee(String name, String address, String phoneNumber, String email, String office, double salary, Date dateHired) {
+        super(name, address, phoneNumber, email);
+        this.office = office;
+        this.salary = salary;
+        this.dateHired = dateHired;
+    }
+
+    @Override
+    public String toString() {
+        return "Employee: " + name + " (Office: " + office + ")";
+    }
+}
+
+class Faculty extends Employee {
+    private String officeHours;
+    private String rank;
+
+    public Faculty(String name, String address, String phoneNumber, String email, String office, double salary, Date dateHired, String officeHours, String rank) {
+        super(name, address, phoneNumber, email, office, salary, dateHired);
+        this.officeHours = officeHours;
+        this.rank = rank;
+    }
+
+    @Override
+    public String toString() {
+        return "Faculty: " + name + " (Rank: " + rank + ")";
+    }
+}
+
+class Staff extends Employee {
+    private String title;
+
+    public Staff(String name, String address, String phoneNumber, String email, String office, double salary, Date dateHired, String title) {
+        super(name, address, phoneNumber, email, office, salary, dateHired);
+        this.title = title;
+    }
+
+    @Override
+    public String toString() {
+        return "Staff: " + name + " (Title: " + title + ")";
     }
 }

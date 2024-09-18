@@ -1,114 +1,110 @@
 import java.math.BigInteger;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Scanner;
+class Rational {
+    private BigInteger numerator;
+    private BigInteger denominator;
 
-class Rational extends Number implements Comparable<Rational> {
-    private BigInteger numerator = BigInteger.ZERO;
-    private BigInteger denominator = BigInteger.ONE;
-
-    // Default constructor
-    public Rational() {
-        this(BigInteger.ZERO, BigInteger.ONE);
-    }
-
-    // Constructor with BigInteger arguments for numerator and denominator
+    // Constructor
     public Rational(BigInteger numerator, BigInteger denominator) {
         if (denominator.equals(BigInteger.ZERO)) {
-            throw new IllegalArgumentException("Denominator cannot be zero");
+            throw new ArithmeticException("Denominator cannot be zero");
         }
-        BigInteger gcd = numerator.gcd(denominator); // Find the GCD
-        this.numerator = numerator.divide(gcd);
-        this.denominator = denominator.divide(gcd);
+        this.numerator = numerator;
+        this.denominator = denominator;
+        reduce(); // Reduce to lowest terms
+    }
 
-        // Make sure denominator is positive
-        if (this.denominator.compareTo(BigInteger.ZERO) < 0) {
-            this.numerator = this.numerator.negate();
-            this.denominator = this.denominator.negate();
+    // Reduce the fraction to its lowest terms
+    private void reduce() {
+        BigInteger gcd = numerator.gcd(denominator);
+        numerator = numerator.divide(gcd);
+        denominator = denominator.divide(gcd);
+
+        // Ensure denominator is positive
+        if (denominator.compareTo(BigInteger.ZERO) < 0) {
+            numerator = numerator.negate();
+            denominator = denominator.negate();
         }
     }
 
-    // Return numerator
-    public BigInteger getNumerator() {
-        return numerator;
+    // Addition
+    public Rational add(Rational other) {
+        BigInteger newNumerator = this.numerator.multiply(other.denominator)
+                .add(other.numerator.multiply(this.denominator));
+        BigInteger newDenominator = this.denominator.multiply(other.denominator);
+        return new Rational(newNumerator, newDenominator);
     }
 
-    // Return denominator
-    public BigInteger getDenominator() {
-        return denominator;
+    // Subtraction
+    public Rational subtract(Rational other) {
+        BigInteger newNumerator = this.numerator.multiply(other.denominator)
+                .subtract(other.numerator.multiply(this.denominator));
+        BigInteger newDenominator = this.denominator.multiply(other.denominator);
+        return new Rational(newNumerator, newDenominator);
     }
 
-    // Add two rational numbers
-    public Rational add(Rational secondRational) {
-        BigInteger n = numerator.multiply(secondRational.getDenominator())
-                .add(denominator.multiply(secondRational.getNumerator()));
-        BigInteger d = denominator.multiply(secondRational.getDenominator());
-        return new Rational(n, d);
+    // Multiplication
+    public Rational multiply(Rational other) {
+        BigInteger newNumerator = this.numerator.multiply(other.numerator);
+        BigInteger newDenominator = this.denominator.multiply(other.denominator);
+        return new Rational(newNumerator, newDenominator);
     }
 
-    // Subtract two rational numbers
-    public Rational subtract(Rational secondRational) {
-        BigInteger n = numerator.multiply(secondRational.getDenominator())
-                .subtract(denominator.multiply(secondRational.getNumerator()));
-        BigInteger d = denominator.multiply(secondRational.getDenominator());
-        return new Rational(n, d);
-    }
-
-    // Multiply two rational numbers
-    public Rational multiply(Rational secondRational) {
-        BigInteger n = numerator.multiply(secondRational.getNumerator());
-        BigInteger d = denominator.multiply(secondRational.getDenominator());
-        return new Rational(n, d);
-    }
-
-    // Divide two rational numbers
-    public Rational divide(Rational secondRational) {
-        if (secondRational.getNumerator().equals(BigInteger.ZERO)) {
-            throw new ArithmeticException("Division by zero");
+    // Division
+    public Rational divide(Rational other) {
+        if (other.numerator.equals(BigInteger.ZERO)) {
+            throw new ArithmeticException("Cannot divide by zero");
         }
-        BigInteger n = numerator.multiply(secondRational.getDenominator());
-        BigInteger d = denominator.multiply(secondRational.getNumerator());
-        return new Rational(n, d);
+        BigInteger newNumerator = this.numerator.multiply(other.denominator);
+        BigInteger newDenominator = this.denominator.multiply(other.numerator);
+        return new Rational(newNumerator, newDenominator);
     }
 
-    // Return a double value of the rational number
-    public double doubleValue() {
-        return numerator.doubleValue() / denominator.doubleValue();
+    // Convert to decimal
+    public double toDecimal() {
+        return new BigDecimal(numerator)
+                .divide(new BigDecimal(denominator), 20, RoundingMode.HALF_UP)
+                .doubleValue();
     }
 
-    // Return a string representation of the rational number
     @Override
     public String toString() {
-        if (denominator.equals(BigInteger.ONE)) {
-            return numerator.toString();
-        } else {
-            return numerator + "/" + denominator;
-        }
-    }
-
-    // Implement compareTo to compare two rational numbers
-    @Override
-    public int compareTo(Rational o) {
-        BigInteger n1 = numerator.multiply(o.getDenominator());
-        BigInteger n2 = o.getNumerator().multiply(denominator);
-        return n1.compareTo(n2);
-    }
-
-    // Implement abstract methods from the Number class
-    @Override
-    public int intValue() {
-        return (int) doubleValue();
-    }
-
-    @Override
-    public float floatValue() {
-        return (float) doubleValue();
-    }
-
-    @Override
-    public long longValue() {
-        return (long) doubleValue();
-    }
-
-    @Override
-    public short shortValue() {
-        return (short) doubleValue();
+        return numerator + "/" + denominator;
     }
 }
+
+
+
+class RationalTest {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+
+        // Read the first rational number
+        System.out.print("Enter the first rational number: ");
+        BigInteger numerator1 = new BigInteger(input.next());
+        BigInteger denominator1 = new BigInteger(input.next());
+        Rational r1 = new Rational(numerator1, denominator1);
+
+        // Read the second rational number
+        System.out.print("Enter the second rational number: ");
+        BigInteger numerator2 = new BigInteger(input.next());
+        BigInteger denominator2 = new BigInteger(input.next());
+        Rational r2 = new Rational(numerator2, denominator2);
+
+        // Perform operations
+        Rational sum = r1.add(r2);
+        Rational difference = r1.subtract(r2);
+        Rational product = r1.multiply(r2);
+        Rational quotient = r1.divide(r2);
+
+        // Display results
+        System.out.println(r1 + " + " + r2 + " = " + sum);
+        System.out.println(r1 + " - " + r2 + " = " + difference);
+        System.out.println(r1 + " * " + r2 + " = " + product);
+        System.out.println(r1 + " / " + r2 + " = " + quotient);
+        System.out.println(r2 + " is " + r2.toDecimal());
+    }
+}
+
