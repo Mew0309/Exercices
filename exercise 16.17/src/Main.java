@@ -68,7 +68,9 @@ public class Exercise_16_17 extends Application {
         primaryStage.show(); // Display the stage
     }
 
-    /** Set the text color */
+    /**
+     * Set the text color
+     */
     private void setColor() {
         text.setFill(new Color(slRed.getValue(), slGreen.getValue(),
                 slBlue.getValue(), slOpacity.getValue()));
